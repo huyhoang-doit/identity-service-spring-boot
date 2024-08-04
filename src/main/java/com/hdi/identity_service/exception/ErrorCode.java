@@ -7,6 +7,7 @@ public enum ErrorCode {
     USERNAME_INVALID(1003, "Username is invalid"),
     PASSWORD_INVALID(1004, "Password is invalid"),
     USER_NOT_EXISTED(1005, "User not existed"),
+    UNAUTHENTICATED(1006, "Unauthenticated"),
 
     ;
 
