@@ -4,6 +4,8 @@ server:
     context-path: /identity
 
 spring:
+  application:
+    name: identity-service
   banner:
     location: banner.txt
   datasource:
@@ -16,4 +18,4 @@ spring:
     show-sql: true
 
 jwt:
-  secret-key: "7g49bjlBG2cfSj4V6a5N9QW+voRYEXX0DjvJFeS4fPRfbGGzy2rzq3WvNvfeNvxC"
+  signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
