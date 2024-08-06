@@ -8,6 +8,7 @@ import com.hdi.identity_service.enums.Role;
 import com.hdi.identity_service.exception.AppException;
 import com.hdi.identity_service.exception.ErrorCode;
 import com.hdi.identity_service.mapper.UserMapper;
+import com.hdi.identity_service.repository.RoleRepository;
 import com.hdi.identity_service.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class UserService {
     private UserRepository userRepository;
     private UserMapper userMapper;
     PasswordEncoder passwordEncoder;
+    RoleRepository roleRepository;
 
     public UserResponse createRequest(UserCreationRequest request) {
         if(userRepository.existsByUsername(request.getUsername()))
@@ -48,6 +50,7 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasAuthority('CREATE_DATA')")
     public List<UserResponse> getUsers() {
         log.info("In method get Users");
         return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
@@ -58,7 +61,7 @@ public class UserService {
     public UserResponse getUser(String id) {
         log.info("In method get User by ID");
         return userMapper.toUserResponse(userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found")));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
 
     public void deleteUser(String id) {
@@ -67,8 +70,15 @@ public class UserService {
 
     public UserResponse updateUser(String userId, UserUpdateRequest request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
         userMapper.updateUser(user, request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        var roles = roleRepository.findAllById(request.getRoles());
+
+        user.setRoles(new HashSet<>(roles));
+
        return  userMapper.toUserResponse(userRepository.save(user));
     }
 
