@@ -107,7 +107,5 @@ public class AuthenticationService {
         return IntrospectResponse.builder()
                 .valid(verified && expirationDate.after(new Date()))
                 .build();
-
-
     }
 }
