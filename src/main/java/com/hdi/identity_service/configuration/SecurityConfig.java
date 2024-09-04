@@ -1,7 +1,7 @@
 package com.hdi.identity_service.configuration;
 
-import com.hdi.identity_service.enums.Role;
 import lombok.experimental.NonFinal;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -9,8 +9,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -25,10 +23,15 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final String[] PUBLIC_ENPOINTS = {"/users", "/auth/token", "/auth/introspect"};
+    private final String[] PUBLIC_ENPOINTS = {"/users", "/auth/token", "/auth/introspect", "/auth/logout"};
 
     @NonFinal
     protected String SIGNER_KEY = "ci927jBnQ4GsVEqj6ClN77nEFVMbcK4ZDq79UA6StkxWkOZVHGHNZc2HnjoUwiCX\n";
+
+    @Autowired
+    private CustomJwtDecoder customJwtDecoder;
+
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -37,8 +40,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated());
 
         httpSecurity.oauth2ResourceServer(oauth2 ->
-                    oauth2.jwt(jwtConfigurer ->
-                            jwtConfigurer.decoder(jwtDecoder())
+                    oauth2.jwt(jwtConfigurer -> jwtConfigurer
+                                    .decoder(customJwtDecoder)
                                     .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                             .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                 );
@@ -69,9 +72,6 @@ public class SecurityConfig {
         return jwtAuthenticationConverter;
     }
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
-    }
+
 
 }
