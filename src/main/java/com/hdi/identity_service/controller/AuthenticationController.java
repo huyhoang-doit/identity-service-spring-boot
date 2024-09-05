@@ -1,9 +1,6 @@
 package com.hdi.identity_service.controller;
 
-import com.hdi.identity_service.dto.request.ApiResponse;
-import com.hdi.identity_service.dto.request.AuthenticationRequest;
-import com.hdi.identity_service.dto.request.IntrospectRequest;
-import com.hdi.identity_service.dto.request.LogoutRequest;
+import com.hdi.identity_service.dto.request.*;
 import com.hdi.identity_service.dto.response.AuthenticationResponse;
 import com.hdi.identity_service.dto.response.IntrospectResponse;
 import com.hdi.identity_service.service.AuthenticationService;
@@ -46,6 +43,15 @@ public class AuthenticationController {
             throws JOSEException, ParseException {
         authenticationService.logout(request);
         return ApiResponse.<Void>builder()
+                .build();
+    }
+
+    @PostMapping("/refresh")
+    ApiResponse<AuthenticationResponse> refresh(@RequestBody RefreshRequest request)
+            throws JOSEException, ParseException {
+        var result = authenticationService.refreshToken(request);
+        return ApiResponse.<AuthenticationResponse>builder()
+                .result(result)
                 .build();
     }
 }
