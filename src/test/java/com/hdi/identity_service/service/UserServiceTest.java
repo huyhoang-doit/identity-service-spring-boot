@@ -1,10 +1,12 @@
 package com.hdi.identity_service.service;
 
-import com.hdi.identity_service.dto.request.UserCreationRequest;
-import com.hdi.identity_service.dto.response.UserResponse;
-import com.hdi.identity_service.entity.User;
-import com.hdi.identity_service.exception.AppException;
-import com.hdi.identity_service.repository.UserRepository;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,12 +15,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 
-import java.time.LocalDate;
+import com.hdi.identity_service.dto.request.UserCreationRequest;
+import com.hdi.identity_service.dto.response.UserResponse;
+import com.hdi.identity_service.entity.User;
+import com.hdi.identity_service.exception.AppException;
+import com.hdi.identity_service.repository.UserRepository;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 @TestPropertySource("/test.properties")
 public class UserServiceTest {
@@ -34,7 +36,7 @@ public class UserServiceTest {
     private LocalDate dob;
 
     @BeforeEach
-    void initData(){
+    void initData() {
         dob = LocalDate.of(1990, 1, 1);
 
         request = UserCreationRequest.builder()
@@ -63,7 +65,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void createUser_validRequest_success(){
+    void createUser_validRequest_success() {
         // GIVEN
         when(userRepository.existsByUsername(anyString())).thenReturn(false);
         when(userRepository.save(any())).thenReturn(user);
@@ -77,16 +79,14 @@ public class UserServiceTest {
     }
 
     @Test
-    void createUser_userExisted_fail(){
+    void createUser_userExisted_fail() {
         // GIVEN
         when(userRepository.existsByUsername(anyString())).thenReturn(true);
 
         // WHEN
-        var exception = assertThrows(AppException.class,
-                () -> userService.createRequest(request));
+        var exception = assertThrows(AppException.class, () -> userService.createRequest(request));
 
         // THEN
-        Assertions.assertThat(exception.getErrorCode().getCode())
-                .isEqualTo(1001);
+        Assertions.assertThat(exception.getErrorCode().getCode()).isEqualTo(1001);
     }
 }

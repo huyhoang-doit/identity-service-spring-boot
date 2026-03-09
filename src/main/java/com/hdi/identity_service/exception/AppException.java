@@ -1,6 +1,6 @@
 package com.hdi.identity_service.exception;
 
-public class AppException extends RuntimeException{
+public class AppException extends RuntimeException {
 
     public AppException(ErrorCode errorCode) {
         super(errorCode.getMsg());

@@ -1,10 +1,11 @@
 package com.hdi.identity_service.dto.response;
 
+import java.util.List;
+
 import com.hdi.identity_service.entity.Permission;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor

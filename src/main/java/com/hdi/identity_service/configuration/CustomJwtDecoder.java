@@ -1,10 +1,9 @@
 package com.hdi.identity_service.configuration;
 
+import java.text.ParseException;
+import java.util.Objects;
+import javax.crypto.spec.SecretKeySpec;
 
-import com.hdi.identity_service.dto.request.IntrospectRequest;
-import com.hdi.identity_service.service.AuthenticationService;
-import com.nimbusds.jose.JOSEException;
-import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -14,9 +13,11 @@ import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.spec.SecretKeySpec;
-import java.text.ParseException;
-import java.util.Objects;
+import com.hdi.identity_service.dto.request.IntrospectRequest;
+import com.hdi.identity_service.service.AuthenticationService;
+import com.nimbusds.jose.JOSEException;
+
+import lombok.experimental.NonFinal;
 
 @Component
 public class CustomJwtDecoder implements JwtDecoder {
@@ -30,7 +31,6 @@ public class CustomJwtDecoder implements JwtDecoder {
 
     private NimbusJwtDecoder nimbusJwtDecoder = null;
 
-
     @Override
     public Jwt decode(String token) throws JwtException {
 
@@ -39,14 +39,13 @@ public class CustomJwtDecoder implements JwtDecoder {
                     IntrospectRequest.builder().token(token).build());
 
             if (!response.isValid()) throw new JwtException("Token invalid");
-        }catch(JOSEException | ParseException e) {
+        } catch (JOSEException | ParseException e) {
             throw new JwtException(e.getMessage());
         }
 
-        if(Objects.isNull(nimbusJwtDecoder)){
+        if (Objects.isNull(nimbusJwtDecoder)) {
             SecretKeySpec secretKeySpec = new SecretKeySpec(SIGNER_KEY.getBytes(), "HS512");
-            nimbusJwtDecoder = NimbusJwtDecoder
-                    .withSecretKey(secretKeySpec)
+            nimbusJwtDecoder = NimbusJwtDecoder.withSecretKey(secretKeySpec)
                     .macAlgorithm(MacAlgorithm.HS512)
                     .build();
         }
