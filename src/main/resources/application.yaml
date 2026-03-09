@@ -9,16 +9,16 @@ spring:
   banner:
     location: banner.txt
   datasource:
-    url: "jdbc:mysql://localhost:3306/identity-service"
+    url: ${DBMS_CONNECTION:jdbc:mysql://localhost:3306/identity-service}
     driverClassName: "com.mysql.cj.jdbc.Driver"
-    username: admin
-    password: admin
+    username: ${DBMS_USERNAME:admin}
+    password:  ${DBMS_PASSWORD:admin}
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
 
 jwt:
-  signerKey: "ci927jBnQ4GsVEqj6ClN77nEFVMbcK4ZDq79UA6StkxWkOZVHGHNZc2HnjoUwiCX"
+  signerKey: ${SIGNERKEY:ci927jBnQ4GsVEqj6ClN77nEFVMbcK4ZDq79UA6StkxWkOZVHGHNZc2HnjoUwiCX}
   valid-duration: 15 # in seconds
   refreshable-duration: 36000 # in seconds
